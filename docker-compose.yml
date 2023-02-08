@@ -17,9 +17,9 @@ services:
         volumes:
             - /var/docker/plex/config:/config
             - /var/docker/plex/transcode:/transcode
-            - /home/user/data/television:/data/tvshows
-            - /home/user/data/movies:/data/movies
-            - /home/user/data/music:/data/music
+            - /home/${USER}/data/television:/data/tvshows
+            - /home/${USER}/data/movies:/data/movies
+            - /home/${USER}/data/music:/data/music
         restart: unless-stopped
         # devices:
         #     - /dev/dri/card0:/dev/dri/card0 #your devices go here
@@ -38,10 +38,10 @@ services:
             - '8118:8118'
         restart: unless-stopped
         volumes:
-            - '/home/user/data2/data:/data'
-            - '/home/user/data2/config:/config'
+            - '/home/${USER}/media-config/data:/data'
+            - '/home/${USER}/media-config/config:/config'
             - '/etc/localtime:/etc/localtime:ro'
-            - /home/user/data/:/downloads
+            - /home/${USER}/data/:/downloads
         env_file:
           - qbittorrentvpn.env
         environment:
@@ -71,8 +71,8 @@ services:
             - AUTO_UPDATE=true 
             - RUN_OPTS=<run options here>
         volumes:
-            - /home/user/data2/jackett/config:/config
-            - /home/user/data2/data:/downloads
+            - /home/${USER}/media-config/jackett/config:/config
+            - /home/${USER}/media-config/data:/downloads
         network_mode: host #9117
         restart: unless-stopped
     
@@ -80,14 +80,12 @@ services:
         image: ghcr.io/linuxserver/radarr
         container_name: radarr
         environment:
-            - PUID=0
-            - PGID=0
+            - PUID=1000
+            - PGID=1000
             - TZ=America/Sao_Paulo
         volumes:
-            - /home/user/data2/radarr:/config
-            # - /home/user/data/movies:/movies
-            # - /home/user/data2/data:/downloads
-            - /home/user/data:/downloads
+            - /home/${USER}/media-config/radarr:/config
+            - /home/${USER}/data:/downloads
         network_mode: host #7878
         restart: unless-stopped
 
@@ -95,14 +93,12 @@ services:
         image: ghcr.io/linuxserver/sonarr
         container_name: sonarr
         environment:
-            - PUID=0
-            - PGID=0
+            - PUID=1000
+            - PGID=1000
             - TZ=America/Sao_Paulo
         volumes:
-            - /home/user/data2/sonarr:/config
-            # - /home/user/data2/data:/downloads
-            # - /home/user/data/television:/tv
-            - /home/user/data:/downloads
+            - /home/${USER}/media-config/sonarr:/config
+            - /home/${USER}/data:/downloads
         network_mode: host #8989
         restart: unless-stopped
     bazarr:
@@ -113,9 +109,9 @@ services:
           - PGID=1000
           - TZ=America/Sao_Paulo
         volumes:
-            - /home/user/data2/bazarr:/config
-            - /home/user/data/movies:/downloads
-            - /home/user/data/television:/tv
+            - /home/${USER}/media-config/bazarr:/config
+            - /home/${USER}/data/movies:/downloads
+            - /home/${USER}/data/television:/tv
         ports:
           - 6767:6767
         restart: unless-stopped
@@ -127,9 +123,9 @@ services:
     #         - PGID=1000
     #         - TZ=America/Sao_Paulo
     #     volumes:
-    #         - /home/user/data2/lidarr:/config
-    #         - /home/user/data/music:/music 
-    #         - /home/user/data2/data:/downloads 
+    #         - /home/${USER}/media-config/lidarr:/config
+    #         - /home/${USER}/data/music:/music 
+    #         - /home/${USER}/media-config/data:/downloads 
     #     network_mode: host #8686:8686
     #     restart: unless-stopped
   
@@ -142,6 +138,6 @@ services:
     #       - TZ=America/Sao_Paulo
     #     # put your directories here
     #     volumes:
-    #       - /home/user/data2/prowlarr:/config
+    #       - /home/${USER}/media-config/prowlarr:/config
     #     network_mode: host #9696
     #     restart: unless-stopped
