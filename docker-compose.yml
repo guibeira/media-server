@@ -1,19 +1,18 @@
 version: '3.8'
 services:
-    pms-docker:
+    plex:
+        image: lscr.io/linuxserver/plex:latest
         container_name: plex
         network_mode: host
         hostname: plex
         env_file:
           - plex.env
-        # runtime: nvidia
+        # runtime: intel
         environment:
             - TZ=America/Sao_Paulo
             - PLEX_UID=1000
             - PLEX_GID=1000
             - ADVERTISE_IP= #ip:port here e.g. http://127.0.0.1:32400
-            # - NVIDIA_VISIBLE_DEVICES=GPU-04aeacae-0ae1-25b6-1504-a4bec4ed2da9 #change as needed
-            # - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
         volumes:
             - /var/docker/plex/config:/config
             - /var/docker/plex/transcode:/transcode
@@ -21,10 +20,10 @@ services:
             - ${DOWNLOAD_FOLDER}/movies:/data/movies
             - ${DOWNLOAD_FOLDER}/music:/data/music
         restart: unless-stopped
-        # devices:
+        devices:
+              - /dev/dri:/dev/dri # for hardware acceleration using intel instructions
         #     - /dev/dri/card0:/dev/dri/card0 #your devices go here
         #     - /dev/dri/renderD128:/dev/dri/renderD128 #may be different
-        image: plexinc/pms-docker:plexpass
     
     arch-qbittorrentvpn:
         container_name: qbittorrentvpn
@@ -36,7 +35,6 @@ services:
             - '6881:6881/udp'
             - '6969:6969'
             - '8118:8118'
-        network_mode: host #6565
         restart: unless-stopped
         volumes:
             - '/home/${USER}/media-config/data:/data'
@@ -76,7 +74,16 @@ services:
             - /home/${USER}/media-config/data:/downloads
         network_mode: host #9117
         restart: unless-stopped
-    
+
+    flaresolverr:
+        image: ghcr.io/flaresolverr/flaresolverr
+        container_name: flaresolverr
+        environment:
+          - LOG_LEVEL=info
+        ports:
+          - 8191:8191
+        restart: unless-stopped
+
     radarr:
         image: ghcr.io/linuxserver/radarr
         container_name: radarr
@@ -102,6 +109,7 @@ services:
             - ${DOWNLOAD_FOLDER}:/downloads
         network_mode: host #8989
         restart: unless-stopped
+
     bazarr:
         image: lscr.io/linuxserver/bazarr:latest
         container_name: bazarr
@@ -115,7 +123,6 @@ services:
             - ${DOWNLOAD_FOLDER}/data/television:/tv
         ports:
           - 6767:6767
-        network_mode: host #6767
         restart: unless-stopped
     # lidarr:
     #     image: ghcr.io/linuxserver/lidarr
