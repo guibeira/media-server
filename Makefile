@@ -1,6 +1,6 @@
 DOWNLOAD_FOLDER=/home/${USER}/media-download
 
-create-folders:
+setup:
 	@echo "Creating folders"
 	mkdir -p ${DOWNLOAD_FOLDER}/movies
 	mkdir -p ${DOWNLOAD_FOLDER}/music
